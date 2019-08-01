@@ -15,6 +15,9 @@ function newSystem:init()
 	}
 end
 
+local TELEPORT_TIMER = 6
+local VOTING_TIMER = 10
+
 function newSystem:step(t)
 	if #self.state.gameStack < 1 then
 		if self.state.isFetchingGameStack then
@@ -33,16 +36,23 @@ function newSystem:step(t)
 	end
 
 	for entity, pad, teleport in World.core:components("Pad", "Teleporter") do
+		if t - teleport.timerTeleport < TELEPORT_TIMER then
+			return
+		end
+		teleport.isTeleporting = false
+
 		if not teleport.activeGame then
 			-- take a game off the stack, this Teleporter needs one
 			teleport.activeGame = self.state.gameStack[1]
 			teleport.timerStart = t
 			table.remove(self.state.gameStack, 1)
 		else
-			if t - teleport.timerStart > 5 then
+			if t - teleport.timerStart > VOTING_TIMER then
 				-- Times up, teleport or remove the active game
 				if self:hasEnoughVotes(entity) then
-					self:performTeleport(entity, pad, teleport)
+					teleport.timerTeleport = t
+					teleport.isTeleporting = true
+					self:performTeleport(entity, pad, teleport.activeGame)
 				end
 				teleport.activeGame = nil
 			end
@@ -91,11 +101,11 @@ local function getPlayers(dict)
 	return players
 end
 
-function newSystem:performTeleport(entity, pad, teleport)
+function newSystem:performTeleport(entity, pad, activeGame)
 	spawn(function()
 		local listOfPlayers = getPlayers(pad.users)
 		for _, player in ipairs(listOfPlayers) do
-			TeleportService:Teleport(teleport.activeGame.rootPlaceId, player)
+			TeleportService:Teleport(activeGame.rootPlaceId, player)
 		end
 	end)
 end

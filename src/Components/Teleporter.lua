@@ -5,5 +5,8 @@ return World.defineComponent(script.Name, function()
 		activeGame = nil,
 		votesFor = {},
 		votesAgainst = {},
+		timerTeleport = -math.huge,
+		isTeleporting = false,
+		timerStart = -math.huge,
 	}
 end)
