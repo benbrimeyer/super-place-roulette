@@ -1,0 +1,48 @@
+{
+  "name": "placeR",
+  "tree": {
+    "$className": "DataModel",
+    "HttpService": {
+      "$className": "HttpService",
+      "$properties": {
+        "HttpEnabled": true
+      }
+    },
+
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+
+      "server": {
+        "$path": "main/main.server.lua"
+      }
+    },
+
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "Source": {
+        "$path": "src"
+      },
+
+      "RemoteEvent": {
+        "$className": "RemoteEvent"
+      },
+
+      "Packages": {
+        "$className": "Folder",
+
+        "Promise": {
+          "$path": "Packages/roblox-lua-promise/lib"
+        },
+        "Recs": {
+          "$path": "Packages/recs/src"
+        },
+        "t": {
+          "$path": "Packages/t/lib"
+        },
+        "Roact": {
+          "$path": "Packages/Roact/src"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+[submodule "Packages/roblox-lua-promise"]
+	path = Packages/roblox-lua-promise
+	url = https://github.com/LPGhatguy/roblox-lua-promise.git
+[submodule "Packages/recs"]
+	path = Packages/recs
+	url = https://github.com/AmaranthineCodices/recs.git
+[submodule "Packages/t"]
+	path = Packages/t
+	url = https://github.com/Roblox/t.git
+[submodule "Packages/Roact"]
+	path = Packages/Roact
+	url = http://www.github.com/Roblox/Roact
