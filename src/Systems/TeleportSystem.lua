@@ -16,7 +16,8 @@ function newSystem:init()
 end
 
 local TELEPORT_TIMER = 6
-local VOTING_TIMER = 10
+local VOTING_TIMER = 15
+local INTERMISSION_TIMER = 3.5
 
 function newSystem:step(t)
 	if #self.state.gameStack < 1 then
@@ -39,10 +40,17 @@ function newSystem:step(t)
 		if t - teleport.timerTeleport < TELEPORT_TIMER then
 			return
 		end
+		if t - teleport.intermissionTimer < INTERMISSION_TIMER then
+			teleport.isIntermission = true
+			return
+		end
+		teleport.isIntermission = false
 		teleport.isTeleporting = false
+		teleport.timerLength = VOTING_TIMER
 
 		if not teleport.activeGame then
 			-- take a game off the stack, this Teleporter needs one
+			World.sound.emitFrom(game.SoundService, 3567412941).play()
 			teleport.activeGame = self.state.gameStack[1]
 			teleport.timerStart = t
 			table.remove(self.state.gameStack, 1)
@@ -50,9 +58,14 @@ function newSystem:step(t)
 			if t - teleport.timerStart > VOTING_TIMER then
 				-- Times up, teleport or remove the active game
 				if self:hasEnoughVotes(entity) then
+					World.sound.emitFrom(game.SoundService, 3567413570).play()
 					teleport.timerTeleport = t
 					teleport.isTeleporting = true
 					self:performTeleport(entity, pad, teleport.activeGame)
+				else
+					-- failed to vote
+					World.sound.emitFrom(game.SoundService, 3567413906).play()
+					teleport.intermissionTimer = t
 				end
 				teleport.activeGame = nil
 			end

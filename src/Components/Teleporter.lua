@@ -6,6 +6,7 @@ return World.defineComponent(script.Name, function()
 		votesFor = {},
 		votesAgainst = {},
 		timerTeleport = -math.huge,
+		intermissionTimer = -math.huge,
 		isTeleporting = false,
 		timerStart = -math.huge,
 	}

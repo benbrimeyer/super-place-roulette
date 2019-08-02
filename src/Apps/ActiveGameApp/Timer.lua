@@ -28,7 +28,7 @@ function Timer:tween()
 
 	local tween = game:GetService("TweenService"):Create(
 		self.ref.current,
-		TweenInfo.new(10, Enum.EasingStyle.Linear),
+		TweenInfo.new(self.props.timerLength, Enum.EasingStyle.Linear),
 		{
 			Size = UDim2.new(0, 0, 0, 32),
 		}

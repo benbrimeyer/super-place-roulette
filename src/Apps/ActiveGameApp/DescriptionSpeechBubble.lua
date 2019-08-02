@@ -29,7 +29,7 @@ function DescriptionSpeechBubble:render()
 	local textSize = 36
 
 	local maxHeight = self.ref.current and self.ref.current.Parent.AbsoluteSize.Y or MIN_HEIGHT
-	local width = self.ref.current and self.ref.current.AbsoluteSize.X or 0
+	local width = --[[self.ref.current and self.ref.current.AbsoluteSize.X or]] 1035
 	local textHeight = getTextHeight(text, font, textSize, width - TEXT_PADDING) + TEXT_PADDING
 
 	return Roact.createElement("Frame", {

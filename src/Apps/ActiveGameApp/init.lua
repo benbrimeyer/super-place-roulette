@@ -5,6 +5,7 @@ local DescriptionSpeechBubble = require(script.DescriptionSpeechBubble)
 local GameStatLabel = require(script.GameStatLabel)
 local GameThumbnail = require(script.GameThumbnail)
 local TeleportAlert = require(script.TeleportAlert)
+local IntermissionAlert = require(script.IntermissionAlert)
 local Timer = require(script.Timer)
 
 local ActiveGameApp = Roact.PureComponent:extend("ActiveGameApp")
@@ -13,6 +14,7 @@ function ActiveGameApp:render()
 	local activeGame = self.props.activeGame
 	local isTeleporting = self.props.isTeleporting
 	local timerStart = self.props.timerStart
+	local isIntermission = self.props.isIntermission
 
 	local height = 128
 	return Roact.createElement("Frame", {
@@ -25,8 +27,10 @@ function ActiveGameApp:render()
 			ZIndex = 2,
 		}, {
 			teleportAlert = isTeleporting and Roact.createElement(TeleportAlert),
+			intermissionAlert = isIntermission and Roact.createElement(IntermissionAlert),
 			timer = timerStart and Roact.createElement(Timer, {
 				goalTime = timerStart,
+				timerLength = self.props.timerLength,
 			})
 		}),
 

@@ -17,6 +17,18 @@
       }
     },
 
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+
+        "client": {
+          "$path": "main/main.client.lua"
+        }
+      }
+    },
+
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
       "Source": {
