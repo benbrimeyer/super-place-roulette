@@ -46,6 +46,11 @@ function DescriptionSpeechBubble:render()
 			LayoutOrder = 1,
 			[Roact.Ref] = self.ref,
 		}, {
+			sizeConstraint = Roact.createElement("UISizeConstraint", {
+				MinSize = Vector2.new(0, MIN_HEIGHT),
+				MaxSize = Vector2.new(math.huge, maxHeight - avatarHeight - 32),
+			}),
+
 			wrapper = Roact.createElement("Frame", {
 				BackgroundTransparency = 1,
 				Size = UDim2.new(1, 0, 1, 0),
@@ -85,10 +90,7 @@ function DescriptionSpeechBubble:render()
 				ImageColor3 = textColor,
 			}),
 
-			sizeConstraint = Roact.createElement("UISizeConstraint", {
-				MinSize = Vector2.new(0, MIN_HEIGHT),
-				MaxSize = Vector2.new(math.huge, maxHeight - avatarHeight - 32),
-			}),
+
 
 			tail = Roact.createElement("ImageLabel", {
 				BackgroundTransparency = 1,

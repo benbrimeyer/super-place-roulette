@@ -1,4 +1,5 @@
 local Roact = require(game.ReplicatedStorage.Packages.Roact)
+local DateTime = require(game.ReplicatedStorage.Source.Packages.DateTime)
 
 local TitleBanner = require(script.TitleBanner)
 local DescriptionSpeechBubble = require(script.DescriptionSpeechBubble)
@@ -96,6 +97,18 @@ function ActiveGameApp:render()
 						value = activeGame.maxPlayers,
 						isDark = false,
 						LayoutOrder = 3,
+					}),
+					created = Roact.createElement(GameStatLabel, {
+						title = "Created",
+						value = DateTime.fromIsoDate(activeGame.created):Format("MMM, YYYY"),
+						isDark = true,
+						LayoutOrder = 4,
+					}),
+					updated = Roact.createElement(GameStatLabel, {
+						title = "Updated",
+						value = DateTime.fromIsoDate(activeGame.updated):Format("MMM, YYYY"),
+						isDark = false,
+						LayoutOrder = 5,
 					}),
 				}),
 				rightCol = Roact.createElement("Frame", {
