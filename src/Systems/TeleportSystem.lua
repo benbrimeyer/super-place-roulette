@@ -1,6 +1,8 @@
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 
+local compose = require(game.ReplicatedStorage.Source.compose)
+local Rules = game.ReplicatedStorage.Source.Packages.Rules
 local Games = require(game.ReplicatedStorage.Source.Games)
 local Promise = require(game:GetService("ReplicatedStorage").Packages.Promise)
 
@@ -64,7 +66,7 @@ function newSystem:step(t)
 					self:performTeleport(entity, pad, teleport.activeGame)
 				else
 					-- failed to vote
-					World.sound.emitFrom(game.SoundService, 3567413906).play()
+					World.sound.emitFrom(game.SoundService, 3583485778).play()
 					teleport.intermissionTimer = t
 				end
 				teleport.activeGame = nil
@@ -74,11 +76,17 @@ function newSystem:step(t)
 end
 
 function newSystem:fetchForGameStack()
-	return Games.fetchGameStack(10, 1, 1000000):andThen(function(result)
+	print("Fetching more")
+	return Games.fetchGameStack(25, 1, 10000000):andThen(function(result)
 
-		local list = Games.filterGamesWithRule(result.data, function(gameModel)
-			return not gameModel.name:find("'s Place")
-		end)
+		local list = compose(
+			require(Rules.CreatedAndUpdated),
+			require(Rules.NameMatchesDescriptionBlacklist),
+			require(Rules.NameBlacklist),
+			require(Rules.DescriptionBlacklist)
+		)(result.data)
+
+		print("Got:", #list)
 
 		return Promise.resolve(list)
 	end, function(result)

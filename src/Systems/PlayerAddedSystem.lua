@@ -5,7 +5,6 @@ local incrementPlacesVisitedForPlayer = require(game.ReplicatedStorage.Source.Pa
 local newSystem = World.System:extend(script.Name)
 
 local function createLeaderstats(value)
-	print("Value is:", value)
 	local leaderStats = Instance.new("Folder")
 	leaderStats.Name = "leaderstats"
 
@@ -19,7 +18,7 @@ end
 
 function newSystem:step(player)
 	local teleportConnection = player.OnTeleport:Connect(function(teleportState)
-		if teleportState == Enum.TeleportState.InProgress then
+		if teleportState == Enum.TeleportState.RequestedFromServer then
 			incrementPlacesVisitedForPlayer(player.UserId)
 		end
 	end)
