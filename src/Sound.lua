@@ -8,6 +8,8 @@ local function soundObject(part, id)
 
 			sound.Pitch = 1 + math.random() * variance
 			sound.Volume = 0.5
+			sound.EmitterSize = 100
+			sound.MaxDistance = 1000
 			sound:Play()
 			sound.Ended:Connect(function()
 				sound:Destroy()

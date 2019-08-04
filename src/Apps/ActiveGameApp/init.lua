@@ -8,12 +8,44 @@ local GameThumbnail = require(script.GameThumbnail)
 local TeleportAlert = require(script.TeleportAlert)
 local IntermissionAlert = require(script.IntermissionAlert)
 local Timer = require(script.Timer)
+local LoadingBar = require(script.LoadingBar)
 
 local ActiveGameApp = Roact.PureComponent:extend("ActiveGameApp")
 
 function ActiveGameApp:render()
 	local activeGame = self.props.activeGame
 	local isTeleporting = self.props.isTeleporting
+	if not activeGame and not isTeleporting then
+		return Roact.createElement("Frame", {
+			Size = UDim2.new(1, 0, 1, 0),
+			BackgroundTransparency = 1,
+		}, {
+			layout = Roact.createElement("UIListLayout", {
+				Padding = UDim.new(0, 8),
+				SortOrder = Enum.SortOrder.LayoutOrder,
+				HorizontalAlignment = Enum.HorizontalAlignment.Center,
+				VerticalAlignment = Enum.VerticalAlignment.Center,
+			}),
+			textLabel = Roact.createElement("TextLabel", {
+				Text = "Finding new places",
+				BackgroundTransparency = 1,
+				TextColor3 = Color3.fromRGB(213, 219, 199),
+				TextSize = 64,
+				Size = UDim2.new(1, 0, 0, 64),
+				Font = Enum.Font.GothamBlack,
+				LayoutOrder = 1,
+			}),
+			frame = Roact.createElement("Frame", {
+				BackgroundTransparency= 1,
+				Size = UDim2.new(1, 0, 0, 100),
+				LayoutOrder = 2,
+			}, {
+				loadingBar = Roact.createElement(LoadingBar),
+			})
+		})
+	end
+
+
 	local timerStart = self.props.timerStart
 	local isIntermission = self.props.isIntermission
 

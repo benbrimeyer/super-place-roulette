@@ -9,7 +9,7 @@ local blacklist = {
 	"place number: %d*$",
 	"^test$",
 	"^#*$",
-	"Content Deleted",
+	"content deleted",
 }
 
 return function(list)

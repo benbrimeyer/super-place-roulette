@@ -16,10 +16,15 @@ local function createLeaderstats(value)
 	return leaderStats
 end
 
+function newSystem:init()
+	self.triedToTeleport = {}
+end
+
 function newSystem:step(player)
+	local userId = player.userId
 	local teleportConnection = player.OnTeleport:Connect(function(teleportState)
 		if teleportState == Enum.TeleportState.RequestedFromServer then
-			incrementPlacesVisitedForPlayer(player.UserId)
+			self.triedToTeleport[userId] = true
 		end
 	end)
 
@@ -33,6 +38,11 @@ function newSystem:step(player)
 			if leaveConnection then
 				leaveConnection:Disconnect()
 			end
+
+			if self.triedToTeleport[userId] then
+				incrementPlacesVisitedForPlayer(player.UserId)
+			end
+			self.triedToTeleport[userId] = nil
 		end
 	end)
 

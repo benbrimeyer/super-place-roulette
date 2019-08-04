@@ -24,7 +24,11 @@ local COLOR_TEXTBOX = Color3.fromRGB(231, 222, 182)
 function DescriptionSpeechBubble:render()
 	local textColor = Color3.fromRGB(80, 49, 34)
 	local avatarHeight = 150
-	local text = string.format([[%s]], self.props.description)
+
+	local description = self.props.description:len() > 0 and self.props.description
+		or DescriptionSpeechBubble.defaultProps.description
+
+	local text = string.format([[%s]], description)
 	local font = Enum.Font.GothamSemibold
 	local textSize = 36
 
@@ -47,7 +51,7 @@ function DescriptionSpeechBubble:render()
 			[Roact.Ref] = self.ref,
 		}, {
 			sizeConstraint = Roact.createElement("UISizeConstraint", {
-				MinSize = Vector2.new(0, MIN_HEIGHT),
+				MinSize = Vector2.new(0, 0),
 				MaxSize = Vector2.new(math.huge, maxHeight - avatarHeight - 32),
 			}),
 

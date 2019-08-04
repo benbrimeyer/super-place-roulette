@@ -10,35 +10,32 @@ local World = require(game.ReplicatedStorage.Source.World)
 
 local newSystem = World.System:extend(script.Name)
 
-function newSystem:init()
-	self.state = {
-		gameStack = {},
-		isFetchingGameStack = false,
-	}
-end
-
 local TELEPORT_TIMER = 6
 local VOTING_TIMER = 15
 local INTERMISSION_TIMER = 3.5
 
 function newSystem:step(t)
-	if #self.state.gameStack < 1 then
-		if self.state.isFetchingGameStack then
+	for entity, pad, teleport in World.core:components("Pad", "Teleporter") do
+		if #teleport.gameStack < 1 then
+			if teleport.isFetchingGameStack then
+				return
+			end
+
+			-- fetch more games, we are about to run out!
+			teleport.isFetchingGameStack = true
+			self:fetchForGameStack(entity):andThen(function(gameStack)
+				if gameStack then
+					teleport.gameStack = gameStack
+				end
+				teleport.isFetchingGameStack = false
+			end, function(result)
+				teleport.isFetchingGameStack = false
+			end)
+		end
+		if #teleport.gameStack == 0 then
 			return
 		end
 
-		-- fetch more games, we are about to run out!
-		self.state.isFetchingGameStack = true
-		self:fetchForGameStack():andThen(function(gameStack)
-			self.state.gameStack = gameStack
-			self.state.isFetchingGameStack = false
-		end)
-	end
-	if #self.state.gameStack == 0 then
-		return
-	end
-
-	for entity, pad, teleport in World.core:components("Pad", "Teleporter") do
 		if t - teleport.timerTeleport < TELEPORT_TIMER then
 			return
 		end
@@ -52,21 +49,21 @@ function newSystem:step(t)
 
 		if not teleport.activeGame then
 			-- take a game off the stack, this Teleporter needs one
-			World.sound.emitFrom(game.SoundService, 3567412941).play()
-			teleport.activeGame = self.state.gameStack[1]
+			World.sound.emitFrom(entity, 3567412941).play()
+			teleport.activeGame = teleport.gameStack[1]
 			teleport.timerStart = t
-			table.remove(self.state.gameStack, 1)
+			table.remove(teleport.gameStack, 1)
 		else
 			if t - teleport.timerStart > VOTING_TIMER then
 				-- Times up, teleport or remove the active game
 				if self:hasEnoughVotes(entity) then
-					World.sound.emitFrom(game.SoundService, 3567413570).play()
+					World.sound.emitFrom(entity, 3567413570).play()
 					teleport.timerTeleport = t
 					teleport.isTeleporting = true
 					self:performTeleport(entity, pad, teleport.activeGame)
 				else
 					-- failed to vote
-					World.sound.emitFrom(game.SoundService, 3583485778).play()
+					World.sound.emitFrom(entity, 3583485778).play()
 					teleport.intermissionTimer = t
 				end
 				teleport.activeGame = nil
@@ -75,20 +72,53 @@ function newSystem:step(t)
 	end
 end
 
-function newSystem:fetchForGameStack()
-	print("Fetching more")
-	return Games.fetchGameStack(25, 1, 10000000):andThen(function(result)
+function newSystem:getKeyword(entity)
+	local keywords = entity:FindFirstChild("Keywords")
+	if keywords then
+		local keyword = keywords:GetChildren()[math.random(1, #keywords:GetChildren())]
+		return keyword.Name
+	end
 
+	return nil
+end
+
+function newSystem:fetchForGameStack(entity)
+	local promise
+	local keyword = self:getKeyword(entity)
+	if keyword then
+		promise = Games.fetchGameStackWithKeyword(keyword)
+	else
+		promise = Games.fetchGameStack(100, 1, 100000000)
+	end
+
+	return promise:andThen(function(result)
 		local list = compose(
-			require(Rules.CreatedAndUpdated),
 			require(Rules.NameMatchesDescriptionBlacklist),
 			require(Rules.NameBlacklist),
-			require(Rules.DescriptionBlacklist)
-		)(result.data)
+			require(Rules.DescriptionBlacklist),
+			require(Rules.CreatedAndUpdated)
+		)(result)
 
-		print("Got:", #list)
 
-		return Promise.resolve(list)
+		local universeIds = {}
+		for _, gameModel in ipairs(list) do
+			table.insert(universeIds, gameModel.id)
+		end
+		return Games.fetchGamePlayabilityStatus(universeIds):andThen(function(playabilityResult)
+			-- merge playability status
+			for _, playability in ipairs(playabilityResult) do
+				for _, gameModel in ipairs(list) do
+					if gameModel.id == playability.universeId then
+						gameModel.playability = playability
+					end
+				end
+			end
+
+
+			return Promise.resolve(compose(
+				require(Rules.PlayabilityStatus)
+			)(list))
+		end)
 	end, function(result)
 		print("Uh oh:", result)
 	end)

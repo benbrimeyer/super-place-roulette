@@ -34,7 +34,7 @@ function newSystem:step()
 		end
 
 		local props = getActiveGame(entity)
-		if props.activeGame or props.isTeleporting or props.isIntermission then
+		--if props.activeGame or props.isTeleporting or props.isIntermission then
 			Roact.update(screen.roact, createNewTree({
 				activeGame = props.activeGame,
 				isTeleporting = props.isTeleporting,
@@ -42,7 +42,7 @@ function newSystem:step()
 				timerStart = props.timerStart,
 				timerLength = props.timerLength
 			}))
-		end
+		--end
 	end
 end
 
