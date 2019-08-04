@@ -26,6 +26,26 @@ function newSystem:step()
 				end
 
 				self.previousStates[entity] = isOnPad
+
+			elseif entity.Parent.Name == "Coffin" then
+				if not entity:FindFirstChild("debounce") then
+					local isOnPad = pad.users[self.userId]
+					if isOnPad ~= self.previousStates[entity] then
+						if isOnPad then
+							local d = Instance.new("BoolValue", entity)
+							d.Name = "debounce"
+							game.Debris:AddItem(d, 20)
+
+							local track = entity.Parent.AnimationController:LoadAnimation(entity.Parent.Animation)
+							track:Play()
+						end
+					end
+
+					self.previousStates[entity] = isOnPad
+
+
+				end
+
 			end
 		end
 	end

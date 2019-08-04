@@ -32,7 +32,7 @@ function DescriptionSpeechBubble:render()
 	local font = Enum.Font.GothamSemibold
 	local textSize = 36
 
-	local maxHeight = self.ref.current and self.ref.current.Parent.AbsoluteSize.Y or MIN_HEIGHT
+	local maxHeight = --[[self.ref.current and self.ref.current.Parent.AbsoluteSize.Y or MIN_HEIGHT]] 560
 	local width = --[[self.ref.current and self.ref.current.AbsoluteSize.X or]] 1035
 	local textHeight = getTextHeight(text, font, textSize, width - TEXT_PADDING) + TEXT_PADDING
 

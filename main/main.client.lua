@@ -14,6 +14,7 @@ core:registerStepper(World.event(game:GetService("RunService").Stepped, {
 	require(game.ReplicatedStorage.Source.Systems.ButtonSystem),
 	require(game.ReplicatedStorage.Source.Systems.AnimationSystem),
 	require(game.ReplicatedStorage.Source.Systems.WarpSystem),
+	require(game.ReplicatedStorage.Source.Systems.GamepassSystem),
 }))
 
 local Roact = require(game.ReplicatedStorage.Packages.Roact)
