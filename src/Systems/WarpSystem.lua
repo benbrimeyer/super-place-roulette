@@ -17,6 +17,7 @@ function newSystem:step(t)
 
 				local character = game.Players:GetPlayerByUserId(user).Character
 				if character then
+					World.sound.emitFrom(game.SoundService, 3596153655).play()
 					character.PrimaryPart.CFrame = entity.Parent.link.Value.CFrame
 				end
 				warp.lastState[user] = t

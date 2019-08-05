@@ -19,7 +19,7 @@ end
 local function createNewTree(props)
 	return Roact.createElement("SurfaceGui", {
 		Face = Enum.NormalId.Left,
-		LightInfluence = 0.25,
+		LightInfluence = 0.4,
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 		CanvasSize = Vector2.new(1, 0.5) * 1400
 	}, {

@@ -14,7 +14,7 @@ local function UserOwnsGamePass(userId)
 			local success, result = pcall(function()
 				return MarketplaceService:UserOwnsGamePassAsync(userId, GAMEPASS_ID)
 			end)
-			print(result)
+
 			if success then
 				resolve(result)
 			else
@@ -39,6 +39,8 @@ function newSystem:step(t)
 		UserOwnsGamePass(userId):andThen(function(isOwner)
 			self.isFetching = false
 			if isOwner and not gate.isDown then
+				World.sound.emitFrom(entity, 3596154775).play()
+				World.sound.emitFrom(entity, 3596154498).play()
 				gate.isDown = true
 				TweenService:Create(entity.PrimaryPart, TweenInfo.new(6), {
 					CFrame = entity.PrimaryPart.CFrame + Vector3.new(0, -20, 0),
