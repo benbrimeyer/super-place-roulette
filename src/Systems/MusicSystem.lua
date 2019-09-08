@@ -22,9 +22,15 @@ function newSystem:step(t)
 					if entity.Name == "Spooky" then
 						game.SoundService:FindFirstChild("Night_Cries").Volume = 0.75
 						game.SoundService:FindFirstChild("Ponorum - perc").Volume = 0
+						game.SoundService:FindFirstChild("Exotico Speedo").Volume = 0
+					elseif entity.Name == "Meme" then
+						game.SoundService:FindFirstChild("Night_Cries").Volume = 0
+						game.SoundService:FindFirstChild("Ponorum - perc").Volume = 0
+						game.SoundService:FindFirstChild("Exotico Speedo").Volume = 0.75
 					else
 						game.SoundService:FindFirstChild("Night_Cries").Volume = 0
 						game.SoundService:FindFirstChild("Ponorum - perc").Volume = 0.75
+						game.SoundService:FindFirstChild("Exotico Speedo").Volume = 0
 					end
 				end
 			end
