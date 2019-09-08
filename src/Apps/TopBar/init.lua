@@ -10,6 +10,7 @@ function TopBar:init()
 	starterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
 	starterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Chat, true)
 	starterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, true)
+	starterGui:SetCoreGuiEnabled(Enum.CoreGuiType.EmotesMenu, true)
 end
 
 function TopBar:render()
