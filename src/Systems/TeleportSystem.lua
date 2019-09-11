@@ -16,57 +16,59 @@ local INTERMISSION_TIMER = 3.5
 
 function newSystem:step(t)
 	for entity, pad, teleport in World.core:components("Pad", "Teleporter") do
-		if #teleport.gameStack < 1 then
-			if teleport.isFetchingGameStack then
+		if entity:IsDescendantOf(workspace) then
+			if #teleport.gameStack < 1 then
+				if teleport.isFetchingGameStack then
+					return
+				end
+
+				-- fetch more games, we are about to run out!
+				teleport.isFetchingGameStack = true
+				self:fetchForGameStack(entity):andThen(function(gameStack)
+					if gameStack then
+						teleport.gameStack = gameStack
+					end
+					teleport.isFetchingGameStack = false
+				end, function(result)
+					teleport.isFetchingGameStack = false
+				end)
+			end
+			if #teleport.gameStack == 0 then
 				return
 			end
 
-			-- fetch more games, we are about to run out!
-			teleport.isFetchingGameStack = true
-			self:fetchForGameStack(entity):andThen(function(gameStack)
-				if gameStack then
-					teleport.gameStack = gameStack
-				end
-				teleport.isFetchingGameStack = false
-			end, function(result)
-				teleport.isFetchingGameStack = false
-			end)
-		end
-		if #teleport.gameStack == 0 then
-			return
-		end
+			if t - teleport.timerTeleport < TELEPORT_TIMER then
+				return
+			end
+			if t - teleport.intermissionTimer < INTERMISSION_TIMER then
+				teleport.isIntermission = true
+				return
+			end
+			teleport.isIntermission = false
+			teleport.isTeleporting = false
+			teleport.timerLength = VOTING_TIMER
 
-		if t - teleport.timerTeleport < TELEPORT_TIMER then
-			return
-		end
-		if t - teleport.intermissionTimer < INTERMISSION_TIMER then
-			teleport.isIntermission = true
-			return
-		end
-		teleport.isIntermission = false
-		teleport.isTeleporting = false
-		teleport.timerLength = VOTING_TIMER
-
-		if not teleport.activeGame then
-			-- take a game off the stack, this Teleporter needs one
-			World.sound.emitFrom(entity, 3567412941).play()
-			teleport.activeGame = teleport.gameStack[1]
-			teleport.timerStart = t
-			table.remove(teleport.gameStack, 1)
-		else
-			if t - teleport.timerStart > VOTING_TIMER then
-				-- Times up, teleport or remove the active game
-				if self:hasEnoughVotes(entity) then
-					World.sound.emitFrom(entity, 3567413570).play()
-					teleport.timerTeleport = t
-					teleport.isTeleporting = true
-					self:performTeleport(entity, pad, teleport.activeGame)
-				else
-					-- failed to vote
-					World.sound.emitFrom(entity, 3583485778).play()
-					teleport.intermissionTimer = t
+			if not teleport.activeGame then
+				-- take a game off the stack, this Teleporter needs one
+				World.sound.emitFrom(entity, 3567412941).play()
+				teleport.activeGame = teleport.gameStack[1]
+				teleport.timerStart = t
+				table.remove(teleport.gameStack, 1)
+			else
+				if t - teleport.timerStart > VOTING_TIMER then
+					-- Times up, teleport or remove the active game
+					if self:hasEnoughVotes(entity) then
+						World.sound.emitFrom(entity, 3567413570).play()
+						teleport.timerTeleport = t
+						teleport.isTeleporting = true
+						self:performTeleport(entity, pad, teleport.activeGame)
+					else
+						-- failed to vote
+						World.sound.emitFrom(entity, 3583485778).play()
+						teleport.intermissionTimer = t
+					end
+					teleport.activeGame = nil
 				end
-				teleport.activeGame = nil
 			end
 		end
 	end
@@ -82,21 +84,49 @@ function newSystem:getKeyword(entity)
 	return nil
 end
 
+function newSystem:getAlgorithm(entity)
+	local random = math.floor(math.random() * 100)
+	local array = {}
+	for _, object in ipairs(entity:GetChildren()) do
+		for index = 0, object.Value do
+			array[index] = object
+		end
+	end
+	return array[random] or array[1]
+end
+
+function newSystem:getRandomUserId(entity)
+	local userId = entity:GetChildren()[math.random(1, #entity:GetChildren())]
+	return userId.Value
+end
+
 function newSystem:fetchForGameStack(entity)
 	local promise
-	local keyword = self:getKeyword(entity)
-	if keyword then
-		promise = Games.fetchGameStackWithKeyword(keyword)
+
+	local union = entity:FindFirstChild("Union")
+	if union then
+		local algorithm = self:getAlgorithm(union)
+
+		if algorithm.Name == "Range" then
+			promise = Games.fetchPlaceStack(50, 1, 3000000)
+		elseif algorithm.Name == "UserId" then
+			promise = Games.fetchUserGames(self:getRandomUserId(algorithm))
+		end
 	else
-		promise = Games.fetchGameStack(100, 1, 100000000)
+		local keyword = self:getKeyword(entity)
+		if keyword then
+			promise = Games.fetchGameStackWithKeyword(keyword)
+		else
+			promise = Games.fetchGameStack(100, 1, 100000000)
+		end
 	end
 
 	return promise:andThen(function(result)
 		local list = compose(
 			require(Rules.NameMatchesDescriptionBlacklist),
 			require(Rules.NameBlacklist),
-			require(Rules.DescriptionBlacklist),
-			require(Rules.CreatedAndUpdated)
+			require(Rules.DescriptionBlacklist)
+			--require(Rules.CreatedAndUpdated)
 		)(result)
 
 
