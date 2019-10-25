@@ -31,7 +31,7 @@ function newSystem:step(t)
 						game.SoundService:FindFirstChild("Exotico Speedo").Volume = 0.75
 					elseif entity.Name == "Retro" then
 						game.SoundService:FindFirstChild("Night_Cries").Volume = 0
-						game.SoundService:FindFirstChild("The Great Strategy").Volume = 0.75
+						game.SoundService:FindFirstChild("The Great Strategy").Volume = 0.3
 						game.SoundService:FindFirstChild("Ponorum - perc").Volume = 0
 						game.SoundService:FindFirstChild("Exotico Speedo").Volume = 0
 					else

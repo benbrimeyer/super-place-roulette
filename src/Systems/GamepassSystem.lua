@@ -9,7 +9,8 @@ local newSystem = World.System:extend(script.Name)
 local SALE_PITCH_DEBOUNCE = 1.5
 local GAMEPASS_ID = 6936519
 local function UserOwnsGamePass(userId)
-	return Promise.new(function(resolve, reject)
+	return Promise.resolve(true)
+	--[[return Promise.new(function(resolve, reject)
 		spawn(function()
 			local success, result = pcall(function()
 				return MarketplaceService:UserOwnsGamePassAsync(userId, GAMEPASS_ID)
@@ -21,7 +22,7 @@ local function UserOwnsGamePass(userId)
 				reject(result)
 			end
 		end)
-	end)
+	end)]]
 end
 
 function newSystem:init()
@@ -37,19 +38,22 @@ function newSystem:step(t)
 		self.isFetching = true
 
 		UserOwnsGamePass(userId):andThen(function(isOwner)
-			self.isFetching = false
-			if isOwner and not gate.isDown then
-				World.sound.emitFrom(entity, 3596154775).play()
-				World.sound.emitFrom(entity, 3596154498).play()
-				gate.isDown = true
-				TweenService:Create(entity.PrimaryPart, TweenInfo.new(6), {
-					CFrame = entity.PrimaryPart.CFrame + Vector3.new(0, -20, 0),
-				}):Play()
-			end
+			spawn(function()
+				wait(2)
+				self.isFetching = false
+				if isOwner and not gate.isDown then
+					World.sound.emitFrom(entity, 3596154775).play()
+					World.sound.emitFrom(entity, 3596154498).play()
+					gate.isDown = true
+					TweenService:Create(entity.PrimaryPart, TweenInfo.new(6), {
+						CFrame = entity.PrimaryPart.CFrame + Vector3.new(0, -20, 0),
+					}):Play()
+				end
+			end)
 		end)
 	end
 
-	for entity, pad, sellGamepass in World.core:components("Pad", "SellGamepass") do
+	--[[for entity, pad, sellGamepass in World.core:components("Pad", "SellGamepass") do
 		if t - self.lastSalePitch > SALE_PITCH_DEBOUNCE then
 			if pad.users[userId] then
 				self.lastSalePitch = t
@@ -60,7 +64,7 @@ function newSystem:step(t)
 				end)
 			end
 		end
-	end
+	end]]
 end
 
 return newSystem
