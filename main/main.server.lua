@@ -17,6 +17,14 @@ core:registerStepper(World.event(game:GetService("Players").PlayerAdded, {
 	require(game.ReplicatedStorage.Source.Systems.PlayerAddedSystem),
 }))
 
+do
+	local RemoteFunction = game:GetService("ReplicatedStorage").RemoteFunction
+	local MarketplaceService = game:GetService("MarketplaceService")
+	RemoteFunction.OnServerInvoke = function(_, userId, gamePassId)
+		return MarketplaceService:UserOwnsGamePassAsync(userId, gamePassId)
+	end
+end
+
 core:start()
 
 game:BindToClose(function()
