@@ -1,11 +1,10 @@
+local Networking = require(game.ReplicatedStorage.Source.Networking)
 local fetchGamesInfo = require(script.Parent.fetchGamesInfo)
 
 local HttpService = game:GetService("HttpService")
 local Random = Random.new()
 
 local Promise = require(game:GetService("ReplicatedStorage").Packages.Promise)
-
-
 
 return function(request)
 	return function(keyword)
@@ -18,7 +17,7 @@ return function(request)
 			local row = previousRow and math.floor(previousRow / 10) or math.random(0, 200)
 			local url = "https://games.rprxy.xyz/v1/games/list?model.keyword=" .. keyword .. "&model.startRows=" .. row
 
-			return request(url, "GET"):andThen(function(results)
+			return request(url, "GET", Networking.headers.ROBLOSECURITY):andThen(function(results)
 				local success, responseBody = pcall(function() return HttpService:JSONDecode(results.Body) end)
 
 				if success then

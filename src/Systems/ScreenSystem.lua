@@ -33,7 +33,7 @@ function newSystem:step()
 			screen.roact = Roact.mount(Roact.createElement("SurfaceGui"), entity.PrimaryPart)
 		end
 
-		local props = getActiveGame(entity)
+		local props = getActiveGame(entity) or {}
 		--if props.activeGame or props.isTeleporting or props.isIntermission then
 			Roact.update(screen.roact, createNewTree({
 				activeGame = props.activeGame,

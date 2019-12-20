@@ -37,7 +37,10 @@ function newSystem:step()
 							game.Debris:AddItem(d, 20)
 							World.sound.emitFrom(entity, 3596154215).play()
 							local track = entity.Parent.AnimationController:LoadAnimation(entity.Parent.Animation)
-							track:Play()
+							spawn(function()
+								wait(0.5)
+								track:Play()
+							end)
 						end
 					end
 

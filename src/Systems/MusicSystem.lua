@@ -24,21 +24,31 @@ function newSystem:step(t)
 						game.SoundService:FindFirstChild("The Great Strategy").Volume = 0
 						game.SoundService:FindFirstChild("Ponorum - perc").Volume = 0
 						game.SoundService:FindFirstChild("Exotico Speedo").Volume = 0
+						game.SoundService:FindFirstChild("Xmas").Volume = 0
 					elseif entity.Name == "Meme" then
 						game.SoundService:FindFirstChild("Night_Cries").Volume = 0
 						game.SoundService:FindFirstChild("The Great Strategy").Volume = 0
 						game.SoundService:FindFirstChild("Ponorum - perc").Volume = 0
 						game.SoundService:FindFirstChild("Exotico Speedo").Volume = 0.75
+						game.SoundService:FindFirstChild("Xmas").Volume = 0
+					elseif entity.Name == "Xmas" then
+						game.SoundService:FindFirstChild("Night_Cries").Volume = 0
+						game.SoundService:FindFirstChild("The Great Strategy").Volume = 0
+						game.SoundService:FindFirstChild("Ponorum - perc").Volume = 0
+						game.SoundService:FindFirstChild("Exotico Speedo").Volume = 0
+						game.SoundService:FindFirstChild("Xmas").Volume = 6
 					elseif entity.Name == "Retro" then
 						game.SoundService:FindFirstChild("Night_Cries").Volume = 0
 						game.SoundService:FindFirstChild("The Great Strategy").Volume = 0.3
 						game.SoundService:FindFirstChild("Ponorum - perc").Volume = 0
 						game.SoundService:FindFirstChild("Exotico Speedo").Volume = 0
+						game.SoundService:FindFirstChild("Xmas").Volume = 0
 					else
 						game.SoundService:FindFirstChild("Night_Cries").Volume = 0
 						game.SoundService:FindFirstChild("The Great Strategy").Volume = 0
 						game.SoundService:FindFirstChild("Ponorum - perc").Volume = 0.75
 						game.SoundService:FindFirstChild("Exotico Speedo").Volume = 0
+						game.SoundService:FindFirstChild("Xmas").Volume = 0
 					end
 				end
 			end

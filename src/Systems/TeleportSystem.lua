@@ -183,6 +183,7 @@ local function getPlayers(dict)
 end
 
 function newSystem:performTeleport(entity, pad, activeGame)
+	print("Perform teleport form pad:", #pad.users)
 	spawn(function()
 		local listOfPlayers = getPlayers(pad.users)
 		for _, player in ipairs(listOfPlayers) do

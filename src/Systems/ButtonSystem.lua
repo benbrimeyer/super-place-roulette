@@ -28,11 +28,25 @@ local function buildRegion3(position, size)
 	return Region3.new(position - sizeOffset, position + sizeOffset)
 end
 
+local function getAllCharacters()
+	local result = {}
+
+	for _, object in pairs(Players:GetPlayers()) do
+		if object.Character then
+			table.insert(result, object.Character)
+		end
+	end
+
+	return result
+end
+
 local function checkCollisions(entity)
 	local collisions = {}
 	local region3 = buildRegion3(entity.Position, entity.Size + Vector3.new(0, 64, 0))
 
-	for _, object in ipairs(Workspace:FindPartsInRegion3(region3, entity, 500)) do
+	local allCharacters = getAllCharacters()
+	local cast = Workspace:FindPartsInRegion3WithWhiteList(region3, allCharacters, 500)
+	for _, object in ipairs(cast) do
 		local model = object:FindFirstAncestorOfClass("Model")
 		if model then
 			local player = Players:GetPlayerFromCharacter(model)
